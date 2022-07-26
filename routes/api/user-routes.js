@@ -1,5 +1,4 @@
 const router = require('express').Router();
-// const { json } = require('sequelize/types');
 const { User } = require('../../models');
 
 // GET /api/users
@@ -54,6 +53,8 @@ router.post('/', (req, res) => {
 // UPDATE /api/users/1
 router.put('/:id', (req, res) => {
   User.update(req.body, {
+    // sequelize documentation requires this in beforeUpdate()
+    individualHooks: true,
     where: {
       id: req.params.id
     }
