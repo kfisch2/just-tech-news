@@ -12,7 +12,7 @@ Post.init(
       primaryKey: true,
       autoIncrement: true
     },
-    titie: {
+    title: {
       type: DataTypes.STRING,
       allowNull: false
     },
@@ -35,6 +35,7 @@ Post.init(
     sequelize,
     // prevent from pluralizing
     freezeTableName: true,
+    // Sequelize camelcases by default, so we specify we underscore names
     underscored: true,
     modelName: 'post'
   }

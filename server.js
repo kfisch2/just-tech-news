@@ -15,7 +15,11 @@ app.use(routes);
 // turn on connection to db and server
 // .sync()  Sequelize taking the models and connecting them to associated
 // database tables
-sequelize.sync({ force: false }).then(() => {
+
+// force: true --> database must sync with the model def. and associations
+// sync method = true => tables recreate if any association changes
+// AKA DROP TABLE IF EXISTS
+sequelize.sync({ force: true }).then(() => {
   app.listen(PORT, () => console.log(`Listening on ${PORT}`))
 });
 
