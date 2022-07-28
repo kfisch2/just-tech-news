@@ -20,7 +20,7 @@ app.use(routes);
 // sync method = true => tables recreate if any association changes
 // AKA DROP TABLE IF EXISTS
 // deletes previous data since we don't have a seeding post?
-sequelize.sync({ force: false }).then(() => {
+sequelize.sync({ force: true }).then(() => {
   app.listen(PORT, () => console.log(`Listening on ${PORT}`))
 });
 
