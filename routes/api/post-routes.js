@@ -1,8 +1,8 @@
 const router = require('express').Router();
 const sequelize = require('../../config/connection');
-const { Post, User, Vote } = require('../../models');
+const { Post, User, Vote, Comment } = require('../../models');
 
-// GET all users
+// GET all posts
 router.get('/', (req, res) => {
   Post.findAll({
     attributes: [
@@ -10,14 +10,23 @@ router.get('/', (req, res) => {
       'post_url',
       'title',
       'created_at',
-      [sequelize.literal('(SELECT COUNT(*) FROM vote WHERE post.id = vote.post_id)'),
-        'vote_count']
+      [sequelize.literal('(SELECT COUNT(*) FROM vote WHERE post.id = vote.post_id)'), 'vote_count']
     ],
     order: [['created_at', 'DESC']],
     include: [
       {
         model: User,
-        attributes: ['username']
+        attributes: ['username'],
+      },
+      {
+        model: Comment,
+        attributes: ['comment_text'],
+        include: [
+          {
+            model: User,
+            attributes: ['username']
+          }
+        ]
       }
     ]
   })
@@ -47,6 +56,10 @@ router.get('/:id', (req, res) => {
       {
         model: User,
         attributes: ['username']
+      },
+      {
+        model: Comment,
+        attributes: ['comment_text']
       }
     ]
   }).then(dbPostData => {
@@ -121,7 +134,7 @@ router.delete('/:id', (req, res) => {
     }
   }).then(dbPostData => {
     if (!dbPostData) {
-      res.status(404).json({ message: 'IT DOES NOT EXIST ANYWAY' });
+      res.status(404).json({ message: "You can't destroy what doesn't exist" });
       return;
     }
     res.json(dbPostData);

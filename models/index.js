@@ -1,6 +1,7 @@
 const Vote = require('./Vote');
 const Post = require('./Post');
 const User = require('./User');
+const Comment = require('./Comment');
 
 
 
@@ -19,7 +20,7 @@ Post.belongsTo(User, {
 // allows us to view posts a single user has voted on
 // as well as a single post that many users have voted on
 
-// User and votes on posts
+//--------POSTS----------//
 User.belongsToMany(Post, {
   through: Vote,
   as: 'voted_posts',
@@ -32,6 +33,7 @@ Post.belongsToMany(User, {
   foreignKey: 'post_id'
 }); 
 
+//--------VOTES----------//
 Vote.belongsTo(User, {
   foreignKey: 'user_id'
 });
@@ -48,8 +50,23 @@ Post.hasMany(Vote, {
   foreignKey: 'post_id'
 });
 
+//--------COMMENTS----------//
+Comment.belongsTo(User, {
+  foreignKey: 'user_id'
+});
+
+Comment.belongsTo(Post, {
+  foreignKey: 'post_id'
+});
+
+User.hasMany(Comment, {
+  foreignKey: 'user_id'
+});
+
+Post.hasMany(Comment, {
+  foreignKey: 'post_id'
+});
 
 
 
-
-module.exports = { User, Post, Vote };
+module.exports = { User, Post, Vote, Comment };
