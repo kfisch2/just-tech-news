@@ -7,7 +7,9 @@ router.get('/', (req, res) => {
   User.findAll({
     attributes: { exclude: ['password'] }
   })
-    .then(dbUserData => res.json(dbUserData))
+    .then(dbUserData => {
+      res.json(dbUserData)
+    })
     .catch(err => {
       console.log(err);
       res.status(500).json(err)
@@ -25,7 +27,7 @@ router.get('/:id', (req, res) => {
         attributes: ['id', 'title', 'post_url', 'created_at']
       },
       {
-        model: Comment, 
+        model: Comment,
         attributes: ['id', 'comment_text', 'created_at'],
         include: {
           model: Post,
@@ -63,7 +65,15 @@ router.post('/', (req, res) => {
     email: req.body.email,
     password: req.body.password
   })
-    .then(dbUserData => res.json(dbUserData))
+    .then(dbUserData => {      
+      // give server access to user_id/username/logged_in
+      req.session.save(() => {
+        req.session.user_id = dbUserData.id;
+        req.session.username = dbUserData.username;
+        req.session.loggedIn = true;
+      })
+    })
+
     .catch(err => {
       console.log(err);
       res.status(500).json(err)
@@ -76,9 +86,9 @@ router.post('/login', (req, res) => {
     where: {
       email: req.body.email
     }
-   }).then(dbUserData => {
+  }).then(dbUserData => {
     if (!dbUserData) {
-      res.status(400).json({ message: 'No user with that email found'});
+      res.status(400).json({ message: 'No user with that email found' });
       return;
     }
     // Verify user
@@ -88,7 +98,14 @@ router.post('/login', (req, res) => {
       return;
     }
 
-    res.json({ user: dbUserData, message: 'You are now logged in.'})
+    req.session.save(() => {
+      // delcare session variables
+      req.session.user_id = dbUserData.id;
+      req.session.username = dbUserData.username;
+      req.session.loggedIn = true;
+    })
+
+    res.json({ user: dbUserData, message: 'You are now logged in.' })
   });
 });
 
@@ -121,16 +138,16 @@ router.delete('/:id', (req, res) => {
       id: req.params.id
     }
   })
-  .then(dbUserData => {
-    if (!dbUserData) {
-      res.status(404).json({ message: 'User not found'});
-      return;
-    }
-  })
-  .catch(err => {
-    console.log(err);
-    res.status(500).json(err)
-  });
+    .then(dbUserData => {
+      if (!dbUserData) {
+        res.status(404).json({ message: 'User not found' });
+        return;
+      }
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json(err)
+    });
 });
 
 module.exports = router;

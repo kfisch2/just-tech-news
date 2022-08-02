@@ -1,11 +1,29 @@
 const path = require('path');
-
 const express = require('express');
+const exphbs = require('express-handlebars');
 const routes = require('./controllers/');
 const sequelize = require('./config/connection');
 
+// cookie storage
+const session = require('express-session');
+const sequelizeStore = require('connect-session-sequelize')(session.Store);
+
+const sess = {
+  secret: 'This is a secret',
+  cookie: {},
+  resave: false,
+  saveUninitialized: true,
+  store: new sequelizeStore({
+    db: sequelize
+  })
+};
+
 const app = express();
 const PORT = process.env.PORT || 3001;
+
+/* sets up express.js session and connects it to 
+Sequelize databse */
+app.use(session(sess));
 
 // middleware
 app.use(express.json());
@@ -17,9 +35,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(routes);
 
 // use handlebar
-const exphbs = require('express-handlebars');
 const hbs = exphbs.create({});
-
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 
@@ -27,7 +43,6 @@ app.set('view engine', 'handlebars');
 // .sync()  Sequelize taking the models and connecting them to associated
 // database tables
 
-// force: true --> database must sync with the model def. and associations
 // sync method = true => tables recreate if any association changes
 // AKA DROP TABLE IF EXISTS
 // deletes previous data since we don't have a seeding post?
