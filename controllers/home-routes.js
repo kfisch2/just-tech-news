@@ -1,6 +1,6 @@
-const router = require("express").Router();
-const sequelize = require("../config/connection");
-const { Post, User, Comment } = require("../models");
+const router = require('express').Router();
+const sequelize = require('../config/connection');
+const { Post, User, Comment } = require('../models');
 
 // router.get('/', (req, res) => {
 //  res.render('homepage', {
@@ -16,33 +16,33 @@ const { Post, User, Comment } = require("../models");
 //  });
 // });
 
-router.get("/", (req, res) => {
+router.get('/', (req, res) => {
   console.log(req.session);
   Post.findAll({
     attributes: [
-      "id",
-      "post_url",
-      "title",
-      "created_at",
+      'id',
+      'post_url',
+      'title',
+      'created_at',
       [
         sequelize.literal(
-          "(SELECT COUNT(*) FROM vote WHERE post.id = vote.post_id)"
+          '(SELECT COUNT(*) FROM vote WHERE post.id = vote.post_id)'
         ),
-        "vote_count",
+        'vote_count',
       ],
     ],
     include: [
       {
         model: Comment,
-        attributes: ["id", "comment_text", "post_id", "user_id", "created_at"],
+        attributes: ['id', 'comment_text', 'post_id', 'user_id', 'created_at'],
         include: {
           model: User,
-          attributes: ["username"],
+          attributes: ['username'],
         },
       },
       {
         model: User,
-        attributes: ["username"],
+        attributes: ['username'],
       },
     ],
   })
@@ -50,7 +50,7 @@ router.get("/", (req, res) => {
       const posts = dbPostData.map((post) => post.get({ plain: true }));
       // pass a single post object into the homepage template
       //.get provides us with
-      res.render("homepage", {
+      res.render('homepage', {
         posts,
         loggedIn: req.session.loggedIn,
       });
@@ -62,51 +62,51 @@ router.get("/", (req, res) => {
 });
 
 // Renders login page
-router.get("/login", (req, res) => {
+router.get('/login', (req, res) => {
   if (req.session.loggedIn) {
-    console.log("logged in!");
-    res.redirect("/");
+    console.log('logged in!');
+    res.redirect('/');
     return;
   }
-  res.render("login");
+  res.render('login');
 });
 
 // Single post page
-router.get("/post/:id", (req, res) => {
+router.get('/post/:id', (req, res) => {
   Post.findOne({
     where: {
       id: req.params.id,
     },
     attributes: [
-      "id",
-      "post_url",
-      "title",
-      "created_at",
+      'id',
+      'post_url',
+      'title',
+      'created_at',
       [
         sequelize.literal(
-          "(SELECT COUNT(*) FROM vote WHERE post.id = vote.post_id)"
+          '(SELECT COUNT(*) FROM vote WHERE post.id = vote.post_id)'
         ),
-        "vote_count",
+        'vote_count',
       ],
     ],
     include: [
       {
         model: Comment,
-        attributes: ["id", "comment_text", "post_id", "user_id", "created_at"],
+        attributes: ['id', 'comment_text', 'post_id', 'user_id', 'created_at'],
         include: {
           model: User,
-          attributes: ["username"],
+          attributes: ['username'],
         },
       },
       {
         model: User,
-        attributes: ["username"],
+        attributes: ['username'],
       },
     ],
   })
     .then((dbPostData) => {
       if (!dbPostData) {
-        res.status(404).json({ message: "Post with that id does not exist" });
+        res.status(404).json({ message: 'Post with that id does not exist' });
         return;
       }
 
@@ -114,7 +114,7 @@ router.get("/post/:id", (req, res) => {
       const post = dbPostData.get({ plain: true });
 
       // pass data to template
-      res.render("single-post", {
+      res.render('single-post', {
         post,
         loggedIn: req.session.loggedIn,
       });
