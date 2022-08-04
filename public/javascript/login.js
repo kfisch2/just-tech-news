@@ -44,7 +44,7 @@ async function loginFormHandler (event) {
 
     if (response.ok) {
       // route to home page?
-      document.location.replace('/');
+      document.location.replace('/dashboard');
     } else {
       alert(response.statusText)
     }
