@@ -1,3 +1,4 @@
+// SIGN UP
 async function signupFormHanlder(event) {
   event.preventDefault();
 
@@ -11,22 +12,22 @@ async function signupFormHanlder(event) {
       body: JSON.stringify({
         username,
         email,
-        password
+        password,
       }),
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
     });
 
     // check response status
     if (response.ok) {
-      console.log('success');
+      document.location.replace('/dashboard');
     } else {
-      alert(response.statusText)
+      alert(response.statusText);
     }
   }
-};
+}
 
 // LOGIN
-async function loginFormHandler (event) {
+async function loginFormHandler(event) {
   event.preventDefault();
 
   const email = document.querySelector('#email-login').value.trim();
@@ -37,20 +38,23 @@ async function loginFormHandler (event) {
       method: 'post',
       body: JSON.stringify({
         email,
-        password
+        password,
       }),
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
     });
 
     if (response.ok) {
       // route to home page?
       document.location.replace('/dashboard');
     } else {
-      alert(response.statusText)
+      alert(response.statusText);
     }
   }
 }
 
-
-document.querySelector('.login-form').addEventListener('submit', loginFormHandler);
-document.querySelector('.signup-form').addEventListener('submit', signupFormHanlder);
+document
+  .querySelector('.login-form')
+  .addEventListener('submit', loginFormHandler);
+document
+  .querySelector('.signup-form')
+  .addEventListener('submit', signupFormHanlder);
