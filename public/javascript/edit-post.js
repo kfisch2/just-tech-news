@@ -1,6 +1,8 @@
 async function saveFormHandler(event) {
   event.preventDefault();
 
+  /* defining this as post_title made the post title not update,
+  however the button and redirect still worked */
   const title = document.querySelector('input[name="post-title"]').value.trim();
 
   const id = window.location.toString().split('/')[
